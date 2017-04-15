@@ -12,6 +12,15 @@ class DefaultPointer<T> implements Pointer<T> {
 	protected T value;
 	protected Map<String, Object> dummy = new ConcurrentHashMap<String, Object>();
 
+	public DefaultPointer() {
+		super();
+	}
+
+	public DefaultPointer(T value) {
+		super();
+		this.value = value;
+	}
+
 	@Override
 	public T get() {
 		return value;
@@ -71,7 +80,7 @@ class DefaultPointer<T> implements Pointer<T> {
 
 	@Override
 	public <F> Pointer<F> map(Function1<F, Pointer<T>> callback) {
-		return Pointers.newPointer(callback.apply(this));
+		return Pointers.create(callback.apply(this));
 	}
 
 	@Override
