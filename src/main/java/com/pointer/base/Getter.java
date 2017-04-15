@@ -1,5 +1,5 @@
 package com.pointer.base;
 
-public interface Get<T> {
+public interface Getter<T> {
 	T get();
 }

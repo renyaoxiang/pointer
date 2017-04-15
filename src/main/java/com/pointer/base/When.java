@@ -1,7 +1,10 @@
 package com.pointer.base;
 
-public interface When<T> {
-	Pointer<T> when(Function<Pointer<T>, Boolean> state, Callback<Pointer<T>> then);
+import com.pointer.util.Callback1;
+import com.pointer.util.Function1;
 
-	Pointer<T> when(Boolean state, Callback<Pointer<T>> then);
+public interface When<T> {
+	Pointer<T> when(Function1<Boolean, Pointer<T>> state, Callback1<Pointer<T>> then);
+
+	Pointer<T> when(Boolean state, Callback1<Pointer<T>> then);
 }

@@ -3,10 +3,10 @@ package com.pointer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.pointer.base.Callback;
-import com.pointer.base.Callback2;
-import com.pointer.base.Function;
 import com.pointer.base.Pointer;
+import com.pointer.util.Callback1;
+import com.pointer.util.Callback2;
+import com.pointer.util.Function1;
 
 class DefaultPointer<T> implements Pointer<T> {
 	protected T value;
@@ -24,18 +24,18 @@ class DefaultPointer<T> implements Pointer<T> {
 	}
 
 	@Override
-	public Pointer<T> action(Callback<Pointer<T>> callback) {
+	public Pointer<T> action(Callback1<Pointer<T>> callback) {
 		callback.apply(this);
 		return this;
 	}
 
 	@Override
-	public Pointer<T> when(Function<Pointer<T>, Boolean> state, Callback<Pointer<T>> then) {
+	public Pointer<T> when(Function1<Boolean, Pointer<T>> state, Callback1<Pointer<T>> then) {
 		return this.when(state.apply(this), then);
 	}
 
 	@Override
-	public Pointer<T> when(Boolean state, Callback<Pointer<T>> then) {
+	public Pointer<T> when(Boolean state, Callback1<Pointer<T>> then) {
 		if (state) {
 			then.apply(this);
 		}
@@ -59,7 +59,7 @@ class DefaultPointer<T> implements Pointer<T> {
 	}
 
 	@Override
-	public Pointer<T> tryCatch(Callback<Pointer<T>> action, Callback2<Pointer<T>, Throwable> onError) {
+	public Pointer<T> tryCatch(Callback1<Pointer<T>> action, Callback2<Pointer<T>, Throwable> onError) {
 		try {
 			action.apply(this);
 
@@ -70,8 +70,31 @@ class DefaultPointer<T> implements Pointer<T> {
 	}
 
 	@Override
-	public <F> F transform(Function<Pointer<T>, F> callback) {
-		return callback.apply(this);
+	public <F> Pointer<F> map(Function1<F, Pointer<T>> callback) {
+		return Pointers.newPointer(callback.apply(this));
+	}
+
+	@Override
+	public Pointer<T> tryCatch(Callback1<Pointer<T>> action, Callback1<Pointer<T>> onFinally) {
+		try {
+			action.apply(this);
+		} finally {
+			onFinally.apply(this);
+		}
+		return this;
+	}
+
+	@Override
+	public Pointer<T> tryCatch(Callback1<Pointer<T>> action, Callback2<Pointer<T>, Throwable> onError,
+			Callback1<Pointer<T>> onFinally) {
+		try {
+			action.apply(this);
+		} catch (Throwable e) {
+			onError.apply(this, e);
+		} finally {
+			onFinally.apply(this);
+		}
+		return this;
 	}
 
 }

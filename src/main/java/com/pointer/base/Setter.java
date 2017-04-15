@@ -1,5 +1,5 @@
 package com.pointer.base;
 
-public interface Set<T> {
+public interface Setter<T> {
 	Pointer<T> set(T value);
 }
