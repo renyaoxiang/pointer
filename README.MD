@@ -1,1 +1,1 @@
-java 函数式编程工具类
+java functional program util
